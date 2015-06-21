@@ -1,0 +1,376 @@
+\documentclass{beamer}  
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage[T1]{fontenc}
+\mode<presentation>
+{ \usetheme{Warsaw} }
+\title{Introductory Lecture \\
+Topics: basics, resources, stl, bitwise tricks
+}
+
+\author{League of Programmers}
+\institute{ACA, IIT Kanpur}
+\date{October 21, 2012}
+ 
+\AtBeginSection[]  % "Beamer, do the following at the start of every section"
+{
+\begin{frame}<beamer> 
+\frametitle{Outline} % make a frame titled "Outline"
+\tableofcontents[currentsection]  % show TOC and highlight current section
+\end{frame}
+}
+
+\begin{document}
+%----------- titlepage ----------------------------------------------%
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Aim and Clarifications}
+%----------- slide --------------------------------------------------%
+\begin{frame}[<+->]
+	\frametitle{Aim}
+
+\begin{itemize}
+\item{Discussion camp not a lecture series. You need to show motivation.}
+\item{To help you introduce to the world of algorithms and competitive programming}
+\item{Many useful algorithms, mathematical insights}
+\item{Useful for any programming contest that you may encounter}
+\item{After this you can rock in job/internship interviews}
+\item{It's fun too!}
+\item There are handsome rewards - prestige, joy of learning new things, and yes lots of money!
+\end{itemize}
+
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}[<+->]
+	\frametitle{Language specifications}
+
+\begin{itemize}
+\item{Language we will stress upon: C, C++, Java \\ ACM-ICPC Official languages. Allowed in almost every contests}
+\item{But, Java is comparatively very slow, so sometimes an optimal algorithm might time out on the judge}
+\item{C has too restrictive and does not support stl/templates /classes}
+\item Use Library functions and Data Structures instead of writing your own every time
+\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Programming competitions}
+
+\begin{itemize}
+\item{ACM-ICPC}
+\pause 
+\item{Google Code Jam - Google's annual programming contest}
+\pause
+\item{Facebook Hacker Cup - an easy gateway to facebook job}
+\pause
+\item{IOPC (IITK), Shaastra (IITM), Bitwise (IITKgp)}
+\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Websites for practice}
+
+\begin{itemize}
+\item{Compete against Indian coders in live contests: Codechef}
+\item{Short Programming Contests: Codeforces, Topcoder}
+\item{Problem set Archives: SPOJ, Project Euler, livearchive, acm.sgu.ru and many more}
+\end{itemize}
+\end{frame}
+
+\section{Common Problems}
+%----------- slide --------------------------------------------------%
+\begin{frame}[fragile]
+	\frametitle{Overflow}
+
+\begin{verbatim}
+#include<stdio.h>
+int main()
+{
+	int a, b;
+	scanf("%d %d", &a, &b);
+	printf("%d\n", a+b);
+	return 0;
+}
+\end{verbatim}
+\pause 
+\begin{itemize}
+\item What if the given numbers are HUGE?
+\pause
+\item Not all the input constraints are explicit
+\pause 
+\item Always think about the worst case scenario, edge cases, etc.
+\end{itemize}	
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}[fragile]
+	\frametitle{Others}
+
+\begin{itemize}
+\item Comparing doubles \\ Always keep a cushion of $\epsilon$ \\
+\pause
+\begin{verbatim}
+double a, b;
+a==b, not a very good idea
+\end{verbatim}
+\pause
+instead, do the following
+\begin{verbatim}
+#define EPS 0.0000001
+(a-EPS<b and a+EPS>b)
+\end{verbatim}
+\pause
+\item Segmentation fault
+\pause
+\begin{itemize}
+\item Invalid memory reference
+\item Using too much memory than provided
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Parsing a problem}
+%----------- slide --------------------------------------------------%
+\newcommand\XOR{\mathbin{\char`\^}}
+\begin{frame}
+	\frametitle{Problem Solving Methodology}
+\begin{itemize}
+\item Understand what the program is expected to do.
+\pause
+\item Understand the Input/Output format and use exactly that format
+\pause
+\item Meaning of constraints
+\pause
+\item What do time limit and memory limit mean??
+\pause
+\item Predict the order requirements of the given problem
+\pause
+\item $1 sec \approx (1 - 2) \ast 10^8$ operations
+\pause
+\item $x MB \approx x/4 \ast 10^6$ sized int arrays
+\pause
+\item For example, $10$ test cases with $N=10000$
+means $O(N^2)$ is required
+\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}[<+->]
+	\frametitle{Problem Solving Methodology}
+\begin{enumerate}
+\item Understanding the problem, mathematical formulation of the problem
+\item Categorizing the problem into one of the many types
+known
+\item Formulate a solution
+\item Verify with the sample test cases, make sure your solution atleast works for them
+\item Generate some small test cases of your own, the sample test cases may not be include some boundary cases.
+\item Coding the solution (the easiest part of all)
+\item Debugging $($TLE$:$ time limit exceeded, WA $:$ incorrect solution etc$.)$
+\end{enumerate}
+
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Some optimizations}
+\begin{itemize}
+\item Not all operations are equally fast: \\ 
+operations on unsigned ints$/$long long are faster \\
+bitwise operators and shift operators $(\& \XOR \mid \gg \ll)$ \\
+Using too much memory $( > 10 MB)$ slows down programmes
+\pause
+\item Look at other people's code for reference and optimisations
+\pause
+\item Read this: \url{http://www.codeproject.com/KB/cpp/C___Code_Optimization.aspx}
+\pause
+\item I/O: do NOT use cin/cout for large input output
+\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Some Standard paradigms}
+\begin{itemize}
+\item Sorting
+\item Searching
+\item Preprocessing
+\item Divide-and-Conquer
+\item Dynamic Programming
+\item Greedy Algorithms
+\item Graph
+\item Network Flow
+\item Backtracking
+\item Computational Geometry
+\item Pure maths
+\item Ad-hoc problems
+\end{itemize}
+\end{frame}
+
+\section{Standard Template Library}
+%----------- slide --------------------------------------------------%
+\newcommand\UND{\mathbin{\char`\_}}
+\begin{frame}[<+->]{Standard template library}
+\alert{Website$:$ \url{http://www.cplusplus.com/reference}}
+\begin{enumerate}
+\item Data Structures
+\begin{itemize}
+\item vector
+\item stack
+\item queue 
+\item priority$\UND$queue
+\item set
+\item map
+\end{itemize}
+\item Algorithms 
+\begin{itemize}
+\item find
+\item max, min
+\item sort
+\item reverse
+\item swap
+\end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Stack}
+\begin{enumerate}
+  \item Last in, first out (LIFO)
+  \item Supports three constant-time operations\\
+  \begin{itemize}
+    \item Push(x): inserts x into the stack
+    \item Pop(): removes the newest item
+    \item Top(): returns the newest item
+  \end{itemize}
+  \item C++ and Java have implementations of stack
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Queue}
+\begin{enumerate}
+  \item First in, first out (FIFO)
+  \item Supports three constant-time operations\\
+  \begin{itemize}
+    \item Enqueue(x): inserts x into the queue
+    \item Dequeue(): removes the oldest item
+    \item Front(): returns the oldest item
+  \end{itemize}
+  \item C++ and Java have implementations of queue
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Priority Queue}
+\begin{enumerate}
+  \item Each element in a PQ has a priority value
+  \item Three operations:\\
+  \begin{itemize}
+    \item Insert(x, p): inserts x into the PQ, whose priority is p
+    \item RemoveTop(): removes the element with the highest priority
+    \item Top(): returns the element with the highest priority
+  \end{itemize}
+  \item All operations can be done quickly if implemented using a heap
+  \item C++ and Java have implementations of priority queue
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Heap}
+\begin{enumerate}
+  \item Complete binary tree with the heap property:\\
+    value of a node $\geq$ values of its children
+  \item The root node has the maximum value
+  \item Constant-time: top()
+  \item Inserting/removing a node can be done in O(log n) time without breaking the heap property
+  \item May need rearrangement of some nodes
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Heap}
+\begin{block}{}
+  \includegraphics[scale=0.5]{heap.png}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Heap}
+Inserting a Node
+  \begin{enumerate}
+    \item Make a new node in the last level, as far left as possible. If the last level is full, make a new one
+    \item If the new node breaks the heap property, swap with its parent node. The new node moves up the tree, which may introduce another conflict
+    \item Repeat 2 until all conflicts are resolved
+    \item \alert{Running time = tree height = O(log n)}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Heap}
+Deleting the Root Node
+  \begin{enumerate}
+    \item Remove the root, and bring the last node (rightmost node in the last level) to the root
+    \item If the root breaks the heap property, look at its children and swap it with the larger one. Swapping can introduce another conflict
+    \item Repeat 2 until all conflicts are resolved
+    \item \alert{Running time = O(log n)}
+  \end{enumerate}
+\end{frame}
+
+\section{Using Bitwise}
+\begin{frame}[<+->]{Introduction to Bitwise Operators}
+\begin{enumerate}
+  \item Numbers are stored in binary and processing on bits is way faster.
+  \item Our weapons:\\
+    $<<$ (left shift); $>>$ (right shift); \& (bitwise and);\\
+    | (bitwise or); \^{} (bitwise xor); $\sim$ (bitwise not)
+  \item Speed up the code by upto 100 times. \alert{Caution: try to use
+    bitwise operations on unsigned integers only}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[<+->]{Beauty of Bitwise}
+\begin{enumerate}
+  \item Example:\\
+    \begin{itemize}
+      \item Any subset of {0,1. . . 31} is a single int\\
+      \item Do set union/intersection/complement in one operation increment/decrement all elements by x in one operation\\
+    \end{itemize}
+  \item Even more:\\
+    \begin{itemize}
+      \item Find if $x \in S$.\\
+      \item Generate all subsets of S in $2^{|S|}$ time\\
+      \item Generate all subsets of {1..n} changing one bit at a time\\
+      \item Generate all subsets of $S$ which have exactly $t$ elements\\
+      \item Count the number of elements of elements in a set $S$\\
+      \item Remove smallest element from $S$\\
+      \item Check if |S| = 1
+    \end{itemize}
+   \item Never multiply or divide or take remainder modulo power of 2
+\end{enumerate}
+\end{frame}
+
+\section{Problems}
+
+\begin{frame}{Problems}
+Added on the contest on VOC \url{http://ahmed-aly.com/voc/} \\
+Contest ID: 2578 \\
+Name: ACA, IITK LOP 01 \\
+Author: pnkjjindal\\
+
+Links:
+\begin{enumerate}
+\item \url{http://spoj.pl/problems/WEIRDFN}
+\item \url{http://www.spoj.pl/problems/HOMO/}
+\item \url{http://spoj.pl/problems/HISTOGRA}
+\item \url{http://spoj.pl/problems/SUBSEQ}
+\item \url{http://www.spoj.pl/problems/NGM2/}
+\item \url{http://www.spoj.pl/problems/JOCHEF}
+\item \url{http://www.spoj.pl/problems/SWTHIN/}
+\item \url{http://www.spoj.pl/problems/LAZYPROG/}
+\end{enumerate}
+\end{frame}
+%----------- slide --------------------------------------------------%
+%\begin{frame}
+%	\frametitle{}
+%\end{frame}
+\end{document}

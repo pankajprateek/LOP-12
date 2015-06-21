@@ -1,0 +1,174 @@
+\documentclass{beamer}  
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\mode<presentation>
+{ \usetheme{Warsaw} }
+\title{Segment Trees
+}
+
+\author{League of Programmers}
+\institute{ACA, IIT Kanpur}
+\date
+ 
+\AtBeginSection[]  % "Beamer, do the following at the start of every section"
+{
+\begin{frame}<beamer> 
+\frametitle{Outline} % make a frame titled "Outline"
+\tableofcontents[currentsection]  % show TOC and highlight current section
+\end{frame}
+}
+
+\begin{document}
+%----------- titlepage ----------------------------------------------%
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Segment Trees}
+\begin{frame}[<+->]{A Simple Problem}
+\begin{block}{Problem Statement}
+    We have an array a[0 \dots n-1].\\\pause
+    We should be able to
+    \begin{enumerate}
+	\item Find the sum of elements l to r
+	\item Change in the value of a specified element of the array a[i]=x
+    \end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{A Simple Problem}
+\begin{block}{Possible Solutions}
+    \begin{itemize}
+	\item Naive one: Go on from l to r and keep on adding and update the element when you get a update request.\\
+	Running time: O(n) to sum and O(1) to update
+	\item Store sum from start to i at the $i^{th}$ index in an another array.\\
+	Running time: O(1) to return sum, O(n) to update
+	\item This works well if the number of query operations are large and very few updates
+	\item What if the number of query and updates are equal?
+	\item Can we perform both the operations in O(log n) time once given the array?
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Segment Trees}
+\begin{block}{}
+    \begin{itemize}
+	\item Representation of the tree\\
+	\begin{itemize}
+	    \item Leaf Nodes are the elements in the array.
+	    \item Each internal node represents some merging of the leaf nodes
+	\end{itemize}
+	\item Number each node in the tree level by level\\
+	\begin{itemize}
+	    \item Observe that for each node the left child is 2*i and right child is 2*i+1
+	    \item For each node the parent is i/2
+	    \item Just use an array to represent the tree, operate on indices to access parents and children
+	\end{itemize}
+	\item \alert{Note: An important feature of the tree segments is that they use linear memory: standard tree segments requires about 4n memory elements to work on an array of size n}
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Solution}
+\begin{block}{}
+    \begin{itemize}
+	\item We start with a segment [0 \ldots n-1]. and every time we divide the current period of two (if it has not yet become a segment of length), and then calling the same procedure on both halves, and for each such segment we store the sum on it.
+	\item In other words, we calculate and remember somewhere sum of the elements of the array, ie segment a[0 \ldots n-1]. Also calculate the amount of the two halves of the array: a[$0 \ldots n/ 2$] and a[$n/2+1 \ldots n-1$]. Each of the two halves, in turn, divide in half and count the amount to keep them, then divide in half again, and so on until it reaches the current segment length 1
+	\item The number of vertices in the worst case is estimated at
+	\begin{center}$n+n/2+n/4+n/8+\dots+1<2n$\end{center}
+	\item The height of the tree is the value of the segments O(log n).
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Implementation}
+\begin{block}{Building the tree}
+    \begin{itemize}
+	\item From the bottom up: first write the values of the elements a[i] the corresponding leaves of the tree, then on the basis of these values to calculate the nodes of the previous level as the sum of the two leaves, then similarly calculate values for one more level, etc. Convenient to describe the operation recursively.
+	\item Time to do this?\\\pause
+	O(n) since each node in the tree is modified once and uses only a max of 2 nodes (already computed) for computation.
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Implementation}
+\begin{block}{Query Request}
+    \begin{itemize}
+	\item The input is two numbers l and r. And we have the time $O(log n)$. Calculate the sum of the segment a[$l \dots r$] .
+	\item Can be done recursively\\
+	\begin{itemize}
+	    \item If your range is within the segment completely, return the value at that node
+	    \item If its completely out of range, return 0 or null
+	    \item If its in one of the child, query on that child
+	    \item If its in both the child, do query on both of them
+	\end{itemize}
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Implementation}
+\begin{block}{Query Request}
+    Pseudocode\\
+    \small{\texttt{
+	query(node,l,r) \{\\
+	\hspace{1mm} if range of node is within l and r\\
+	    \hspace{3mm} return value in node\\
+	\hspace{1mm} else if range of node is completely outside l and r\\
+	    \hspace{3mm} return 0\\
+	\hspace{1mm} else\\
+	    \hspace{3mm} return sum(query(left-child,l,r),query(right-child,l,r))\\
+	\}
+	}}
+    \begin{itemize}
+    \item But this doesn't look O(log n)
+    \item It is.\\
+    At any level of the tree, the maximum number of segments that could call our recursive function when processing a request is 4.
+    \item So, only O(log n) running time.
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Implementation}
+\begin{block}{Renewal Request}
+    \begin{itemize}
+	\item Given an index i and the value of x. What to do?
+	\item Update the nodes in the tree so as to conform to the new value a[i]=x in O(log n).
+	\item How many nodes and what nodes will be affected?\\\pause
+	The nodes from $i^{th}$ leaf node to the way upto the root of the tree.
+	\item Then it is clear that the update request can be implemented as a recursive function: it sends the current node of the tree lines, and this function performs a recursive call from one of his two sons (the one that contains the position i in its segment), and after that - counts the value of the sum in the current node in the same way as we did in the construction of a tree of segments (ie, the sum of the values for the two sons of the current node).
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Implementation}
+\begin{block}{Problem}
+    \begin{itemize}
+	\item You are given an array. You have queries which ask for the maximum element in the range l to r. And you have updates which increase the value of a particular element in the array with some value val.
+	\item But seriously, how to code?
+	\item Lets look at a code
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\section{Problems}
+
+\begin{frame}{Problems}
+Links:
+\begin{enumerate}
+\item \url{http://www.spoj.pl/problems/GSS1/}
+\item \url{http://www.spoj.pl/problems/GSS3/}
+\item \url{http://www.spoj.pl/problems/HORRIBLE/}
+\item \url{http://www.spoj.pl/problems/BRCKTS/}
+\item \url{http://www.spoj.pl/problems/HELPR2D2/}
+\item \url{http://www.spoj.pl/problems/KFSTD/}
+\item \url{http://www.spoj.pl/problems/FREQUENT/}
+\item \url{http://www.spoj.pl/problems/LITE/}
+\end{enumerate}
+\end{frame}
+
+\end{document}

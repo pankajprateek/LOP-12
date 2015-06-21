@@ -1,0 +1,373 @@
+\documentclass{beamer}  
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\mode<presentation>
+{ \usetheme{Warsaw} }
+\title{Graphs
+}
+
+\author{League of Programmers}
+\institute{ACA, IIT Kanpur}
+\date
+ 
+\AtBeginSection[]  % "Beamer, do the following at the start of every section"
+{
+\begin{frame}<beamer> 
+\frametitle{Outline} % make a frame titled "Outline"
+\tableofcontents[currentsection]  % show TOC and highlight current section
+\end{frame}
+}
+
+\begin{document}
+%----------- titlepage ----------------------------------------------%
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Basics}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{What are Graphs?}
+  \begin{itemize}
+    \item An abstract way of representing connectivity using nodes (or vertices) and edges
+    \item Graph G=(V,E) , $E \subseteq V*V$
+    \item We will label the nodes from 1 to n (V)
+    \item m edges connect some pairs of nodes (E)
+    \item Edges can be either one-directional (directed) or bidirectional
+    \item Nodes and edges can have some auxiliary information
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{Terminologies}
+  \begin{itemize}
+    \item Vertex: node of a graph
+    \item Adjacency(u) = $\{v | (u, v) \in E\}$
+    \item Degree(u) = |Adjacency(u)|
+    \item Subgraph: A subset of vertices and edges is a subgraph
+    \item Walk: A sequence $v_1$, $v_2$, \dots, $v_k$ such that $(v_i, v_{i+1}) \in E$
+    \item Trial: A trial is a walk in which no edge occurs twice
+    \item Closed path: A walk where starting and ending vertex are the same
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{Storing Graphs}
+  \begin{itemize}
+    \item We need to store both the set of nodes V and the set of edges E
+    \item Nodes can be stored in an array. Edges must be stored in some other way.
+    \item We want to support the following operations\\
+      \begin{itemize}
+	\item Retrieving all edges incident to a particular node
+	\item Testing if given two nodes are directly connected
+      \end{itemize}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{Adjacency Matrix}
+  \begin{itemize}
+    \item An easy way to store connectivity information
+    \item Checking if two nodes are directly connected: O(1) time
+    \item Make an n x n matrix A
+    \item a[i][j] = 1 if there is an edge from i to j
+    \item a[i][j] = 0 otherwise
+    \item Uses O($n^2$) memory. So, use when n is less than a few thousands, AND when the graph is dense
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{Adjacency List}
+  \begin{itemize}
+    \item Each vertex maintains a list of vertices that are adjacent to it.
+    \item Lists have variable lengths
+    \item We can use: vector< vector<int> >
+    \item Space usage: O(n + m)
+    \item Checking if edge (Vi,Vj) is present in G: \pause O(min(deg(Vi),deg(Vj)))
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{Special Graphs}
+  \begin{itemize}
+    \item \small{{\bf Implicit graphs}\\
+      Two squares on an 8x8 chessboard. Determine the shortest sequence of knight moves from one square to the other.}
+    \item \small{{\bf Tree}: a connected acyclic graph\\
+      The most important type of graph in CS\\
+      Alternate definitions (all are equivalent!)\\}
+      \begin{itemize}
+	\item \small{connected graph with n-1 edges}
+	\item \small{An acyclic graph with n-1 edges}
+	\item \small{There is exactly one path between every pair of nodes}
+	\item \small{An acyclic graph but adding any edge results in a cycle}
+	\item \small{A connected graph but removing any edge disconnects it}
+      \end{itemize}
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Basics}
+\begin{block}{Special Graphs}
+  \begin{itemize}
+    \item \small{{\bf Directed Acyclic Graph (DAG)}}
+    \item \small{{\bf Bipartite Graph}\\
+      Nodes can be separated into two groups S and T such that edges exist between S and T only (no edges within S or within T)}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\section{Graph Traversal}
+\begin{frame}[<+->]{Traversal}
+\begin{block}{Graph Traversal}
+  \begin{itemize}
+    \item The most basic graph algorithm that visits nodes of a graph in certain order
+    \item Used as a subroutine in many other algorithms
+    \item We will cover two algorithms\\
+      \begin{itemize}
+	\item Depth-First Search (DFS): uses recursion
+	\item Breadth-First Search (BFS): uses queue
+      \end{itemize}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Traversal}
+\begin{block}{DFS}
+  \begin{itemize}
+    \item DFS(v): visits all the nodes reachable from v in depth-first order\\
+      \begin{itemize}
+      \item Mark v as visited
+      \item For each edge $v \rightarrow u$:\\
+	\hspace{3mm} If u is not visited, call DFS(u)
+      \end{itemize}
+    \item Use non-recursive version if recursion depth is too big (over a few thousands)
+    \item Replace recursive calls with a stack
+    \item Complexity\\
+      \pause\hspace{2mm} Time: O(|V|+|E|)\\
+      \pause\hspace{2mm} Space: O(|V|) [to maintain the vertices visited till now]
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Traversal}
+\begin{block}{DFS: Uses}
+  \begin{itemize}
+    \item Biconnected components
+    \item A node in a connected graph is called an articulation point if the deletion of that node disconnects the graph.
+    \item A connected graph is called biconnected if it has no articulation points. That is, the deletion of any single node leaves the graph connected.
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Traversal}
+\begin{block}{BFS}
+  BFS(v): visits all the nodes reachable from v in breadth-first order
+  \begin{itemize}
+    \item Initialize a queue Q
+    \item Mark v as visited and push it to Q
+    \item While Q is not empty:\\
+      \hspace{3mm} Take the front element of Q and call it w\\
+      \hspace{3mm} For each edge $w \rightarrow u$:\\
+	\hspace{6mm} If u is not visited, mark it as visited and push it to Q
+    \item Same Time and Space Complexity as DFS
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Traversal}
+\begin{block}{BFS: Uses}
+  \begin{itemize}
+    \item Finding a Path with Minimum Number of edges from starting vertex to any other vertex.
+    \item Solve Shortest Path problem in unweighted graphs
+    \item Spoj Problem\\ \url{http://www.spoj.pl/problems/PPATH/}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Topological Sort}
+\begin{block}{}
+  \begin{itemize}
+    \item Input: a DAG G = V, E
+    \item Output: an ordering of nodes such that for each edge $u \rightarrow v$, u comes before v. There can be many answers
+    \item Pseudocode\\
+      \begin{itemize} 
+	\item Precompute the number of incoming edges deg(v) for each node v
+	\item Put all nodes with zero degree into a queue Q
+	\item Repeat until Q becomes empty:\\
+	  \hspace{3mm} Take v from Q\\
+	  \hspace{3mm} For each edge $v \rightarrow u$\\
+	    \hspace{6mm} Decrement deg(u) (essentially removing the edge $v \rightarrow u$)\\
+	    \hspace{6mm} If deg u becomes zero, push u to Q
+	\end{itemize}
+    \item Time complexity: $O(n+m)$
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\section{MST}
+\begin{frame}[<+->]{Minimum Spanning Tree}
+\begin{block}{}
+  \begin{itemize}
+    \item Input: An undirected weighted graph G = V, E
+    \item Output: A subset of E with the minimum total weight that connects all the nodes into a tree
+    \item There are two algorithms:
+      \begin{itemize}
+	\item Kruskal's algorithm
+	\item Prim's algorithm
+      \end{itemize}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Kruskal's Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item Main idea: the edge e with the smallest weight has to be in the MST
+    \item Keep different supernodes, which are “local MST’s” and then join them by adding edges to form the MST for the whole graph
+    \item Pseudocode:\\
+      \tt{\hspace{3mm} Sort the edges in increasing order of weight\\
+      \hspace{3mm} Repeat until there is one supernode left:\\
+	\hspace{6mm} Take the minimum weight edge e*\\
+	\hspace{6mm} If e* connects two different supernodes:\\
+	  \hspace{9mm} Connect them and merge the supernodes\\
+	\hspace{6mm} Otherwise,\\
+	  \hspace{9mm} ignore e*}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Prim's Algorithm}
+\begin{block}{Prim's Algo}
+  Reading Homework
+\end{block}
+\end{frame}
+
+\section{Shortest Path Algos}
+
+\begin{frame}[<+->]{Floyd-Warshall Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item All pair shortest distance
+    \item Runs in O($n^3$) time
+    \item Algorithm\\
+    \begin{itemize}
+      \item Define f(i, j, k) as the shortest distance from i to j, using 1 ... k as intermediate nodes\\
+	\begin{itemize}
+	  \item f(i, j, n) is the shortest distance from i to j
+	  \item f(i, j, 0) = cost(i, j)
+	\end{itemize}
+      \item The optimal path for f i, j, k may or may not have k as an intermediate node\\
+	\begin{itemize}
+	  \item If it does, f (i, j, k) = f (i,k k-1) + f(k, j, k-1)
+	  \item Otherwise, f (i, j, k) = f (i, j, k-1)
+	\end{itemize}
+      \item Therefore, f (i, j, k) is the minimum of the two quantities above
+      \end{itemize}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Floyd-Warshall Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item Pseudocode:\\
+    \tt{
+      \hspace{2mm} Initialize D to the given cost matrix\\
+      \hspace{2mm} For k = 1 \dots n:\\
+      \hspace{2mm} For all i and j:\\
+	  \hspace{6mm} $d_{ij} = min\{d_{ij}, d_{ik} + d_{kj}\}$
+      }
+      \item Can also be used to detect negative weight cycles in graph?\\
+	\pause How?\\
+	\pause If $d_{ij}+d_{ji} < 0$ for some i and j, then the graph has a negative weight cycle
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Dijkstra's Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item Used to solve Single source Shortest Path problem in Weighted Graphs
+    \item Only for Graphs with positive edge weights.
+    \item The algorithm finds the path with lowest cost (i.e. the shortest path) between that source vertex and every other vertex
+    \item Greedy strategy
+    \item Idea: Find the closest node to s, and then the second closest one, then the third, etc
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Dijkstra's Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item Pseudo code:\\
+    \begin{itemize}
+      \item Maintain a set of nodes S, the shortest distances to which are decided
+      \item Also maintain a vector d, the shortest distance estimate from s
+      \item Initially, S = s, and $d_v$ = cost(s, v)
+      \item Repeat until S = V:\\
+	\hspace{3mm} Find v $\notin$ S with the smallest $d_v$, and add it to S\\
+	\hspace{3mm} For each edge $v \rightarrow u$ of cost c:\\
+	  \hspace{8mm} $d_u = min\{d_u, d_v + c\}$
+    \end{itemize}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Dijkstra's Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item Time complexity depends on the implementation:\\
+      \hspace{3mm} Can be O($n^2$ + m), O(m log n), O(n log n)
+    \item Use priority\_queue<node> for implementing Dijkstra's
+    \item SPOJ Problem\\
+    \url{http://www.spoj.pl/problems/CHICAGO}
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[<+->]{Bellman-Ford Algorithm}
+\begin{block}{}
+  \begin{itemize}
+    \item Single source shortest path for negative weights
+    \item Can also be used to detect negative weight cycles
+    \item Pseudo code:\\
+      \begin{itemize}
+	\item Initialize $d_s = 0$ and $d_v = \infty\ \forall v \neq s$
+	\item For k = 1 \dots n-1:
+	\item For each edge $u \rightarrow v$ of cost c:\\
+	  \hspace{3mm} $d_v = min\{d_v , d_u + c\}$
+      \end{itemize}
+    \item Runs in O(nm) time
+  \end{itemize}
+\end{block}
+\end{frame}
+
+\section{Problems}
+
+\begin{frame}{Problems}
+Links:
+\begin{enumerate}
+\item \url{http://www.spoj.pl/problems/IOPC1201/}
+\item \url{http://www.spoj.pl/problems/TRAFFICN/}
+\item \url{http://www.spoj.pl/problems/PFDEP/}
+\item \url{http://www.spoj.pl/problems/PRATA/}
+\item \url{http://www.spoj.pl/problems/ONEZERO/}
+\item \url{http://www.spoj.pl/problems/PPATH/}
+\item \url{http://www.spoj.pl/problems/PARADOX/}
+\item \url{http://www.spoj.pl/problems/HERDING/}
+\item \url{http://www.spoj.pl/problems/PT07Z/}
+\end{enumerate}
+\end{frame}
+
+
+\end{document}
